@@ -1,0 +1,12 @@
+<VirtualHost *:80>
+    ServerAdmin me@myserver
+    DocumentRoot {{ drupal.home}}/{{ drupal.name}}
+    ServerName localhost
+    RewriteEngine On
+    RewriteOptions inherit
+    CustomLog /var/log/apache2/example.com.log combined
+    <Directory /var/www/html/>
+      Options Indexes FollowSymLinks
+      AllowOverride All
+    </Directory>
+</VirtualHost>

@@ -1,0 +1,18 @@
+state_verbose: True
+
+file_client: local
+
+fileserver_backend:
+  - roots
+
+file_roots:
+  base:
+    - /srv/salt
+    - /srv/formulas/drupal-formula
+    - /srv/formulas/mysql-formula
+    - /srv/formulas/nginx-formula
+    - /srv/formulas/php-formula
+
+pillar_roots:
+  base:
+    - /srv/pillar
