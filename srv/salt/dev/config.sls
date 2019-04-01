@@ -26,3 +26,13 @@ deploy-drupal:
       - apache_site: enable-drupal-site
       - pkg: apache2
     - unless: test -e /tmp/deploy_drupal
+
+apache_service:
+  service.running:
+    - name: apache2
+    - enable: True
+    - restart: True
+    - watch:
+      - apache_site: enable-drupal-site
+    - require:
+      - pkg: apache2
