@@ -1,0 +1,14 @@
+# placeholders at this point:
+{% set conf = salt['grains.filter_by']({
+    'Debian': {
+        'config_path': '/etc/filebeat/filebeat.yml',
+        'config_source': 'salt://filebeat/files/filebeat.yml.jinja',
+        'files': [{'paths': ['/var/log/syslog'], 'type': 'syslog'}]
+    },
+    'RedHat': {
+        'config_path': '/etc/filebeat/filebeat.yml',
+        'config_source': 'salt://filebeat/files/filebeat.yml.jinja',
+        'files': [{'paths': ['/var/log/messages'], 'type': 'syslog'}]
+    },
+}, merge=salt['pillar.get']('filebeat', {})) %}
+

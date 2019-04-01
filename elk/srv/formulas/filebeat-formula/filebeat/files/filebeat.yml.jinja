@@ -1,0 +1,29 @@
+{%- set filebeat = salt['pillar.get']('filebeat', {}) -%}
+{%- set items = filebeat.get('logs', []) -%}
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+
+filebeat.inputs:
+{%- for details in items %}
+{%- if details.get('paths') %}
+- type: {{ details.get('type', 'unset') }}
+  enabled: {{ details.get('enabled', 'unset') }}
+  paths:
+  {%- for path in details.get('paths') %}
+  - {{ path }}
+  {%- endfor %}
+  {% if details.get('tags') %}tags: [ "{{ details.tags | join('", "') }}" ] {% endif%}
+{%- endif %}
+{%- endfor %}
+
+{%- if filebeat.get('logstash') %}
+output.logstash:
+  hosts: ["{{ filebeat.logstash.host }}:{{ filebeat.logstash.port }}"]
+{% endif %}
+ 
+{%- if filebeat.get('redis') %}
+output.redis:
+  hosts: ["{{ filebeat.redis.host }}:{{ filebeat.redis.port }}"]
+  key: "{{ filebeat.redis.key }}"
+{%- endif %}

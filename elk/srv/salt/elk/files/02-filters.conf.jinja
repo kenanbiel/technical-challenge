@@ -1,0 +1,55 @@
+filter {
+    if "beats_input_codec_plain_applied" in [tags] {
+        mutate {
+            remove_tag => [
+                "beats_input_codec_plain_applied"
+            ]
+        }
+    }
+
+    {% for server, hostname in salt['mine.get']('prod-salt-master*', 'network.get_hostname', tgt_type='glob').items() %}
+    if [host][name] == "{{ hostname }}" {
+        json {
+            target => "parsedJson"
+            remove_field => [
+                "parsedJson"
+            ]
+            add_field => {
+                "message" => "%{[parsedJson][message]}"
+            }
+            source => "message"
+        }
+
+        date {
+            match => [
+                "[parsedJson][@timestamp]",
+                "yyyy-MM-dd HH:mm:ss,SSS"
+            ]
+            target => "@timestamp"
+        }
+
+        mutate {
+            remove_field => [
+                "offset",
+                "prospector",
+                "host",
+                "[input][type]",
+                "[beat][version]",
+                "@version"
+            ]
+           add_tag => [ "salt-master", "log" ]
+        }
+    }
+    {% endfor %}
+
+    if [type] == "dlq" {
+        json_encode {
+            source => "[context][data]"
+        }
+        mutate {
+            convert => {
+                "[event][val]" => "string"
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+CMD=/usr/local/bin/curator
+HOST=127.0.0.1
+PREFIX="logstash-"
+DAYS=7
+TIMESTRING="%Y.%m.%d"
+
+${CMD} --host ${HOST} delete indices --older-than ${DAYS} --prefix ${PREFIX} --time-unit days --timestring ${TIMESTRING}
+
